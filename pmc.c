@@ -2,18 +2,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define xn 4
+#define xn 25
 #define camadas 3
-#define l1 5
-#define l2 4
-#define l3 4
+#define l1 5  //quantidade de neuronios na camada 1
+#define l2 4  //quantidade de neuronios na camada 2
+#define l3 5  //quantidade de neuronios na camada 3
 #define tamanhoAmostras 20
 #define n 0.5
 #define e 0.1
 
 int entradas[xn + 1];
 
-//Escolher sempre a maior camada para os parametros wl il, yl
+//Escolher sempre a maior camada para os parametros entre l1, l2, l3 de [x][y][z] das matrizes
 
 
 float wl[l1 + 1][l1][camadas];
@@ -23,7 +23,11 @@ int amostras[xn][tamanhoAmostras];
 int saidaDesejada[l3][tamanhoAmostras];
 const char separadorGenerico[2] = ";";
 const char separadorSaida[2] = "-";
-
+float saida1;
+float saida2;
+float saida3;
+float saida4;
+float saida5;
 
 
 int funcaoDeAtivacao(float u) {
@@ -102,6 +106,12 @@ float resultado = 0.0;
 		}
 	}
 }
+	saida1 = yl[camadas - 1][0];
+	saida2 = yl[camadas - 1][1];
+	saida3 = yl[camadas - 1][2];
+	saida4 = yl[camadas - 1][3];
+	saida5 = yl[camadas - 1][4];
+}
 
 void imprimeRedeResultante() {
 int cont = 0;
@@ -124,7 +134,7 @@ void treinaRede() {
 			//resultado += pesosSinapticos[cont]*amostras[cont][contAmostras];	
 		}
 		//resultado = resultado + pesosSinapticos[xn];
-		saida = funcaoSaida(resultado);
+		//saida = funcaoSaida(resultado);
 		printf("para a amostra: %d , tem-se  saida: %d e saidaDesejada: %d \n", contAmostras, saida, saidaDesejada[contAmostras][contAmostras]);
 		if(saida != saidaDesejada[contAmostras][contAmostras]) {
 			//ajusta pesos
@@ -145,7 +155,7 @@ void treinaRede() {
 }
 
 void parserAmostras(char *strn, int linha) {
-   char copia[20];
+   char copia[100];
    char *token;
    strcpy(copia, strn);
    int contx = 0;
@@ -223,7 +233,7 @@ void imprimeVetores(void) {
 		for(i = 0; i < xn; i++){
 		printf("entrada numero %d de valor %d \n", i, amostras[i][j]);
 		}
-		for(i = 0; i < xn; i++){
+		for(i = 0; i < l3; i++){
 		printf("para a saida numero %d temos: %d \n", j, saidaDesejada[i][j]);
 		}	
 	}
