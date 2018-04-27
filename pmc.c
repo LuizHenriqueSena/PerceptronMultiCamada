@@ -58,14 +58,14 @@ int conty = 0;
 		}
 		for(conty = 0; conty < limite2; conty++) {
 			for(contx = 0; contx < limite1; contx++) {
-				wl[contx][conty][cont] = 0.5;
+				wl[contx][conty][cont] = 1;
 			}
 	}
 }
 }
 
 
-void obtemResultadosPorCamadas(int teste[xn][tamanhoAmostras]) {
+void obtemResultadosPorCamadas(int teste[xn][tamanhoAmostras], int amostra) {
 int cont = 0;
 int limite1 = 0;
 int limite2 = 0;
@@ -93,7 +93,7 @@ float resultado = 0.0;
 			resultado = 0.0;
 		if (cont == 0) {
 			for(contx = 0; contx < limite1; contx++) {
-				resultado += teste[contx][0]*wl[contx][conty][cont];
+				resultado += teste[contx][amostra]*wl[contx][conty][cont];
 				//printf("resultado : %.2f \n", resultado);
 			}
 			Il[conty][cont] = resultado;
@@ -250,7 +250,7 @@ void imprimeVetores(void) {
 int main() {
 	preencheVetorDeAmostras();
 	geraPesosAleatorios();
-	obtemResultadosPorCamadas(amostras);
+	obtemResultadosPorCamadas(amostras, 1);
 	//imprimeVetores();
 	//treinaRede();
 	return 0;
