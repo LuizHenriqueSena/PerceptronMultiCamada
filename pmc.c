@@ -16,7 +16,7 @@ int entradas[xn + 1];
 //Escolher sempre a maior camada para os parametros entre l1, l2, l3 de [x][y][z] das matrizes
 
 
-float wl[l1 + 1][l1][camadas];
+float wl[xn + 1][l1][camadas];
 float Il[l1][l1];
 float Yl[l1][l1];
 int amostras[xn][tamanhoAmostras];
@@ -65,13 +65,15 @@ int conty = 0;
 }
 
 
-void obtemResultadosPorCamadas(int teste[xn+1]) {
+void obtemResultadosPorCamadas(int teste[xn][tamanhoAmostras]) {
 int cont = 0;
 int limite1 = 0;
 int limite2 = 0;
 int contx = 0;
 int conty = 0;
 float resultado = 0.0;
+
+
 	for(cont = 0; cont < camadas; cont++) {
 		//pesosSinapticos[cont] = ((float)(rand()%100))/100; 
 		//printf("PESOS ALEATORIO: %d com valor: %.2f \n", cont, pesosSinapticos[cont]);
@@ -88,29 +90,34 @@ float resultado = 0.0;
 			limite2 = l3;
 		}
 		for(conty = 0; conty < limite2; conty++) {
-		if (conty == 0) {
+			resultado = 0.0;
+		if (cont == 0) {
 			for(contx = 0; contx < limite1; contx++) {
-				resultado += teste[contx]*wl[contx][conty][cont];
+				resultado += teste[contx][0]*wl[contx][conty][cont];
+				//printf("resultado : %.2f \n", resultado);
 			}
 			Il[conty][cont] = resultado;
-			
-			Yl[conty][cont] = funcaoDeAtivacao(Il[conty][cont]);	
+			printf("valor do primeiro resultado do %d neuronio da %d camada: %.2f \n ",conty,cont, Il[conty][cont]);
+			Yl[conty][cont] = Il[conty][cont];	
 		}
 		else {
 			for(contx = 0; contx < limite1; contx++) {
 				resultado += Il[contx][cont-1]*wl[contx][conty][cont];
+				//printf("resultado : %.2f \n ", resultado);
 			}
 			Il[conty][cont] = resultado;
+			printf("valor do primeiro resultado do %d neuronio da %d camada: %.2f \n ",conty,cont, Il[conty][cont]);
 			
-			Yl[conty][cont] = funcaoDeAtivacao(Il[conty][cont]);
+			Yl[conty][cont] = Il[conty][cont];
 		}
 	}
 }
-	saida1 = yl[camadas - 1][0];
-	saida2 = yl[camadas - 1][1];
-	saida3 = yl[camadas - 1][2];
-	saida4 = yl[camadas - 1][3];
-	saida5 = yl[camadas - 1][4];
+	//printf("valor do peso do segundo neuronio da segunda camada %.2f \n ", wl[0][1][0]);
+	saida1 = Yl[camadas - 1][0];
+	saida2 = Yl[camadas - 1][1];
+	saida3 = Yl[camadas - 1][2];
+	saida4 = Yl[camadas - 1][3];
+	saida5 = Yl[camadas - 1][4];
 }
 
 void imprimeRedeResultante() {
@@ -237,11 +244,14 @@ void imprimeVetores(void) {
 		printf("para a saida numero %d temos: %d \n", j, saidaDesejada[i][j]);
 		}	
 	}
+
 }
 
 int main() {
 	preencheVetorDeAmostras();
-	imprimeVetores();
+	geraPesosAleatorios();
+	obtemResultadosPorCamadas(amostras);
+	//imprimeVetores();
 	//treinaRede();
 	return 0;
 }
