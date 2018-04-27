@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #define xn 25
 #define camadas 3
@@ -16,23 +17,30 @@ int entradas[xn + 1];
 //Escolher sempre a maior camada para os parametros entre l1, l2, l3 de [x][y][z] das matrizes
 
 
-float wl[xn + 1][l1][camadas];
-float Il[l1][l1];
-float Yl[l1][l1];
+double wl[xn + 1][l1][camadas];
+double Il[l1][l1];
+double Yl[l1][l1];
 int amostras[xn][tamanhoAmostras];
 int saidaDesejada[l3][tamanhoAmostras];
 const char separadorGenerico[2] = ";";
 const char separadorSaida[2] = "-";
-float saida1;
-float saida2;
-float saida3;
-float saida4;
-float saida5;
+double saida1;
+double saida2;
+double saida3;
+double saida4;
+double saida5;
 
 
-int funcaoDeAtivacao(float u) {
-	if (u<=0) return -1;
-	else return 1;
+double funcaoDeAtivacao(double u) {
+	double retorno;
+	retorno = (1/(1 - pow(2.718281,u)));
+	return retorno;
+}
+
+double derivadaFuncaoDeAtivacao(double u) {
+	double retorno;
+	retorno = funcaoDeAtivacao(u)*(1 - funcaoDeAtivacao(u));
+	return retorno;
 }
 
 void geraPesosAleatorios(){
@@ -71,7 +79,7 @@ int limite1 = 0;
 int limite2 = 0;
 int contx = 0;
 int conty = 0;
-float resultado = 0.0;
+double resultado = 0.0;
 
 
 	for(cont = 0; cont < camadas; cont++) {
@@ -132,7 +140,7 @@ void treinaRede() {
 	int contAmostras = 0;
 	int cont = 0;
 	int cont2 = 0;
-	float resultado = 0;
+	double resultado = 0;
 	int saida;
 	//computa resposta para entradas
 	for (contAmostras = 0; contAmostras < tamanhoAmostras;contAmostras++) {
@@ -247,10 +255,17 @@ void imprimeVetores(void) {
 
 }
 
+double erroQuadraticoMedio(){
+	
+}
+
+
 int main() {
-	preencheVetorDeAmostras();
-	geraPesosAleatorios();
-	obtemResultadosPorCamadas(amostras, 1);
+	double resultado = funcaoDeAtivacao(2);
+	printf("resultado : %.6f \n ", resultado);
+	//preencheVetorDeAmostras();
+	//geraPesosAleatorios();
+	//obtemResultadosPorCamadas(amostras, 1);
 	//imprimeVetores();
 	//treinaRede();
 	return 0;
