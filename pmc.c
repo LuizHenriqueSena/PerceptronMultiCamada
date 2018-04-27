@@ -24,11 +24,7 @@ int amostras[xn][tamanhoAmostras];
 int saidaDesejada[l3][tamanhoAmostras];
 const char separadorGenerico[2] = ";";
 const char separadorSaida[2] = "-";
-double saida1;
-double saida2;
-double saida3;
-double saida4;
-double saida5;
+double saidas[l3];
 
 
 double funcaoDeAtivacao(double u) {
@@ -121,11 +117,11 @@ double resultado = 0.0;
 	}
 }
 	//printf("valor do peso do segundo neuronio da segunda camada %.2f \n ", wl[0][1][0]);
-	saida1 = Yl[camadas - 1][0];
-	saida2 = Yl[camadas - 1][1];
-	saida3 = Yl[camadas - 1][2];
-	saida4 = Yl[camadas - 1][3];
-	saida5 = Yl[camadas - 1][4];
+	saidas[0] = Yl[camadas - 1][0];
+	saidas[1] = Yl[camadas - 1][1];
+	saidas[2] = Yl[camadas - 1][2];
+	saidas[3] = Yl[camadas - 1][3];
+	saidas[4] = Yl[camadas - 1][4];
 }
 
 void imprimeRedeResultante() {
@@ -255,10 +251,28 @@ void imprimeVetores(void) {
 
 }
 
-double erroQuadraticoMedio(){
-	
+double erroQuadratico(int amostra){
+	double retorno;
+	int j;
+	double resultado = 0;
+	obtemResultadosPorCamadas(amostras, amostra);
+	for(j = 0; j < l3; j++){
+		resultado += saidaDesejada[j][amostra] - saidas[j];
+	}
+	retorno = resultado;
+	return retorno;
 }
 
+double erroQuadraticoMedio(){
+	double retorno;
+	int k = 0;
+	double em = 0;
+	for(k = 0; k < tamanhoAmostras; k++) {
+		em += erroQuadratico(k);
+}
+	retorno = em/tamanhoAmostras;
+}
+	
 
 int main() {
 	double resultado = funcaoDeAtivacao(2);
