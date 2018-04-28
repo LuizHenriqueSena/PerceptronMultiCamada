@@ -1,4 +1,4 @@
-AAAAAAAAA
+LETRA A:
 
 1;1;1;1;1;
 1;0;0;0;1;
@@ -6,7 +6,7 @@ AAAAAAAAA
 1;0;0;0;1;
 1;0;0;0;1;
 
-EEEEEEEEEE
+LETRA E:
 
 1;1;1;1;1;
 1;0;0;0;0;
@@ -14,7 +14,7 @@ EEEEEEEEEE
 1;0;0;0;0;
 1;1;1;1;1;
 
-IIIIIIIII
+LETRA I:
 
 1;1;1;1;1;
 0;0;1;0;0;
@@ -22,7 +22,7 @@ IIIIIIIII
 0;0;1;0;0;
 1;1;1;1;1;
 
-OOOOOOOOOO
+LETRA O:
 
 1;1;1;1;1;
 1;0;0;0;1;
@@ -30,7 +30,7 @@ OOOOOOOOOO
 1;0;0;0;1;
 1;1;1;1;1;
 
-UUUUUUUUUU
+LETRA U:
 
 1;0;0;0;1;
 1;0;0;0;1;
