@@ -376,6 +376,33 @@ void treinaRede() {
 
 }
 
+void imprimeVetorDePesos() {
+	int contaCamada = 0;
+	int limite1 = 0;
+	int limite2 = 0;                                                                                                                                                               
+	int contaPeso = 0;
+	int contaNeuronio = 0;
+	double resultado = 0.0;
+
+
+	for(contaCamada = 0; contaCamada < camadas; contaCamada++) {
+		//pesosSinapticos[cont] = ((float)(rand()%100))/100; 
+		//printf("PESOS ALEATORIO: %d com valor: %.2f \n", cont, pesosSinapticos[cont]);
+		if (contaCamada == 0) {
+			limite1 = xn;
+			limite2 = l1;
+		}
+		else if (contaCamada == 1) {
+			limite1 = l1;
+			limite2 = l2;
+		}
+		else if (contaCamada == 2){
+			limite1 = l2;
+			limite2 = l3;
+		}
+		}
+}
+
 
 int main() {
 	//double resultado = funcaoDeAtivacao(25);
