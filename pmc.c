@@ -5,13 +5,15 @@
 
 #define xn 25
 #define camadas 3
-#define l1 5  //quantidade de neuronios na camada 1
-#define l2 4  //quantidade de neuronios na camada 2
+#define l1 10  //quantidade de neuronios na camada 1
+#define l2 8  //quantidade de neuronios na camada 2
 #define l3 5  //quantidade de neuronios na camada 3
 #define tamanhoAmostras 20
 #define n 0.5
 #define e 0.1
 #define eta 0.5
+#define erro 0.1
+#define pesoInicial 0.5
 
 int entradas[xn + 1];
 
@@ -64,7 +66,7 @@ int contaNeuronio = 0;
 		}
 		for(contaNeuronio = 0; contaNeuronio < limite2; contaNeuronio++) {
 			for(contaPeso = 0; contaPeso <= limite1; contaPeso++) {
-				wl[contaNeuronio][contaPeso][cont] = 0.5;
+				wl[contaNeuronio][contaPeso][cont] = pesoInicial;
 			}
 	}
 }
@@ -102,22 +104,23 @@ double resultado = 0.0;
 				resultado += teste[contaPeso][amostra]*wl[contaNeuronio][contaPeso][contaCamada];
 				//printf("resultado : %.2f \n", resultado);
 			}
-			printf("resultado : %d \n", contaPeso);
-			resultado += wl[contaNeuronio][contaPeso + 1][contaCamada] * (-1);
+			//printf("resultado : %d \n", contaPeso);
+			resultado += wl[contaNeuronio][contaPeso][contaCamada] * (-1);
 			Il[contaNeuronio][contaCamada] = resultado;
-			printf("valor antes da fa %.2f \n ",Il[contaNeuronio][contaCamada]);
+			//printf("valor antes da fa %.2f \n ",Il[contaNeuronio][contaCamada]);
 			Yl[contaNeuronio][contaCamada] = funcaoDeAtivacao(Il[contaNeuronio][contaCamada]);	
-			printf("valor do primeiro resultado do %d neuronio da %d camada: %.6f \n ",contaNeuronio,contaCamada, Yl[contaNeuronio][contaCamada]);
+			//printf("valor do primeiro resultado do %d neuronio da %d camada: %.6f \n ",contaNeuronio,contaCamada, Yl[contaNeuronio][contaCamada]);
 		}
 		else {
 			for(contaPeso = 0; contaPeso < limite1; contaPeso++) {
 				resultado += Il[contaPeso][contaCamada-1]*wl[contaNeuronio][contaPeso][contaCamada];
 				//printf("resultado : %.2f \n ", resultado);
 			}
+			resultado += wl[contaNeuronio][contaPeso][contaCamada] * (-1);
 			Il[contaNeuronio][contaCamada] = resultado;
-			printf("valor antes da fa %.2f \n ",Il[contaNeuronio][contaCamada]);
+			//printf("valor antes da fa %.2f \n ",Il[contaNeuronio][contaCamada]);
 			Yl[contaNeuronio][contaCamada] = funcaoDeAtivacao(Il[contaNeuronio][contaCamada]);
-			printf("valor do primeiro resultado do %d neuronio da %d camada: %.6f \n ",contaNeuronio,contaCamada, Yl[contaNeuronio][contaCamada]);
+			//printf("valor do primeiro resultado do %d neuronio da %d camada: %.6f \n ",contaNeuronio,contaCamada, Yl[contaNeuronio][contaCamada]);
 		}
 	}
 }
@@ -179,38 +182,45 @@ int cont = 0;
 	//printf("limiar de ativacao da posicao: %d com valor: %.2f \n", cont, pesosSinapticos[xn]);
 }
 
-void treinaRede() {
-	int contAmostras = 0;
-	int cont = 0;
-	int cont2 = 0;
+void atualizaPesos(int amostra) {
+	int contaPeso, contaNeuronio, contaCamada;
+	int limite1, limite2;
 	double resultado = 0;
-	int saida;
-	//computa resposta para entradas
-	for (contAmostras = 0; contAmostras < tamanhoAmostras;contAmostras++) {
-		resultado = 0;
-		for(cont = 0; cont < xn; cont++) {
-			//resultado += pesosSinapticos[cont]*amostras[cont][contAmostras];	
+	for(contaCamada = 0; contaCamada > camadas; contaCamada++) {
+		if (contaCamada == 0) {
+			limite1 = xn;
+			limite2 = l1;
 		}
-		//resultado = resultado + pesosSinapticos[xn];
-		//saida = funcaoSaida(resultado);
-		printf("para a amostra: %d , tem-se  saida: %d e saidaDesejada: %d \n", contAmostras, saida, saidaDesejada[contAmostras][contAmostras]);
-		if(saida != saidaDesejada[contAmostras][contAmostras]) {
-			//ajusta pesos
-			for(cont2 = 0; cont2 < xn; cont2++) {
-				//pesosSinapticos[cont2] = pesosSinapticos[cont2] + ((n)*(saidaDesejada[contAmostras] + 
-				//(-1)*saida)*(amostras[cont2][contAmostras]));	
+		else if (contaCamada == 1) {
+			limite1 = l1;
+			limite2 = l2;
+		}
+		else if (contaCamada == 2){
+			limite1 = l2;
+			limite2 = l3;
+		}
+		for(contaNeuronio = 0; contaNeuronio < limite2; contaNeuronio++) {
+			resultado = 0;
+			if (contaCamada == 0) {
+				for(contaPeso = 0; contaPeso < limite1; contaPeso++) {
+					wl[contaNeuronio][contaPeso][contaCamada] = wl[contaNeuronio][contaPeso][contaCamada] + eta*
+					vetorDelta[contaNeuronio][contaCamada]*amostras[contaPeso][amostra];
+				}
+					wl[contaNeuronio][contaPeso][contaCamada] = wl[contaNeuronio][contaPeso][contaCamada] + eta*
+					vetorDelta[contaNeuronio][contaCamada]*(-1);
 			}
-			//pesosSinapticos[xn] = pesosSinapticos[xn] + ((saidaDesejada[contAmostras] + 
-			//(-1)*saida));	
-}
-		else {
-			//nao ajusta
+			else {
+				for(contaPeso = 0; contaPeso < limite1; contaPeso++) {
+					wl[contaNeuronio][contaPeso][contaCamada] = wl[contaNeuronio][contaPeso][contaCamada] + eta*
+					vetorDelta[contaNeuronio][contaCamada]*Yl[contaPeso][contaCamada - 1];
+				}
+					wl[contaNeuronio][contaPeso][contaCamada] = wl[contaNeuronio][contaPeso][contaCamada] + eta*
+					vetorDelta[contaNeuronio][contaCamada]*(-1);
+			}				
 		}
-	printf("para a amostra: %d , tem-se \n", contAmostras);
-	imprimeRedeResultante();
 	}
-	
 }
+
 
 void parserAmostras(char *strn, int linha) {
    char copia[100];
@@ -307,6 +317,7 @@ double erroQuadratico(int amostra){
 		resultado += saidaDesejada[j][amostra] - saidas[j];
 	}
 	retorno = resultado;
+	//printf("erro quadratico: %.6f \n ",retorno);
 	return retorno;
 }
 
@@ -319,6 +330,20 @@ double erroQuadraticoMedio(){
 }
 	retorno = em/tamanhoAmostras;
 }
+
+void treinaRede() {
+	int contAmostras = 0;
+	int nEpocas = 0;
+	while (nEpocas < 50) {
+	for (contAmostras = 0; contAmostras < tamanhoAmostras;contAmostras++) {
+		obtemResultadosPorCamadas(amostras, contAmostras);
+		atualizaPesos(contAmostras);
+		printf("erro quadratico medio %.6f \n ",erroQuadraticoMedio());
+		
+	}
+	nEpocas++;	
+	}
+}
 	
 
 int main() {
@@ -327,6 +352,9 @@ int main() {
 	preencheVetorDeAmostras();
 	geraPesosAleatorios();
 	obtemResultadosPorCamadas(amostras, 0);
+	printf("erro quadratico medio %.6f \n ",erroQuadraticoMedio());	
+	atualizaPesos(0);
+	printf("erro quadratico medio %.6f \n ",erroQuadraticoMedio());	
 	//imprimeVetores();
 	//treinaRede();
 	return 0;
