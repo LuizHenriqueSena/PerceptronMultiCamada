@@ -6,13 +6,13 @@
 
 #define xn 25
 #define camadas 3
-#define l1 10  //quantidade de neuronios na camada 1
-#define l2 8  //quantidade de neuronios na camada 2
+#define l1 5  //quantidade de neuronios na camada 1
+#define l2 4  //quantidade de neuronios na camada 2
 #define l3 5  //quantidade de neuronios na camada 3
 #define tamanhoAmostras 20
 #define n 0.5
 #define e 0.1
-#define eta 1
+#define eta 0.5
 #define erro 0.1
 #define pesoInicial 0.2
 
@@ -34,7 +34,7 @@ double saidas[l3];
 
 double funcaoDeAtivacao(double u) {
 	double retorno;
-	retorno = (1/(1 - pow(2.718281,u)));
+	retorno = (1/(1 + pow(2.718281,u)));
 	return retorno;
 }
 
@@ -84,8 +84,6 @@ double resultado = 0.0;
 
 
 	for(contaCamada = 0; contaCamada < camadas; contaCamada++) {
-		//pesosSinapticos[cont] = ((float)(rand()%100))/100; 
-		//printf("PESOS ALEATORIO: %d com valor: %.2f \n", cont, pesosSinapticos[cont]);
 		if (contaCamada == 0) {
 			limite1 = xn;
 			limite2 = l1;
@@ -103,34 +101,26 @@ double resultado = 0.0;
 		if (contaCamada == 0) {
 			for(contaPeso = 0; contaPeso < limite1; contaPeso++) {
 				resultado += teste[contaPeso][amostra]*wl[contaNeuronio][contaPeso][contaCamada];
-				//printf("resultado : %.2f \n", resultado);
 			}
-			//printf("resultado : %d \n", contaPeso);
-			resultado += wl[contaNeuronio][contaPeso][contaCamada] * (-1);
+			resultado += (wl[contaNeuronio][contaPeso][contaCamada] * (-1));
 			Il[contaNeuronio][contaCamada] = resultado;
-			//printf("valor antes da fa %.2f \n ",Il[contaNeuronio][contaCamada]);
 			Yl[contaNeuronio][contaCamada] = funcaoDeAtivacao(Il[contaNeuronio][contaCamada]);	
-			//printf("valor do primeiro resultado do %d neuronio da %d camada: %.6f \n ",contaNeuronio,contaCamada, Yl[contaNeuronio][contaCamada]);
 		}
 		else {
 			for(contaPeso = 0; contaPeso < limite1; contaPeso++) {
-				resultado += Il[contaPeso][contaCamada-1]*wl[contaNeuronio][contaPeso][contaCamada];
-				//printf("resultado : %.2f \n ", resultado);
+				resultado += Yl[contaPeso][contaCamada-1]*wl[contaNeuronio][contaPeso][contaCamada];
 			}
-			resultado += wl[contaNeuronio][contaPeso][contaCamada] * (-1);
+			resultado += (wl[contaNeuronio][contaPeso][contaCamada] * (-1));
 			Il[contaNeuronio][contaCamada] = resultado;
-			//printf("valor antes da fa %.2f \n ",Il[contaNeuronio][contaCamada]);
 			Yl[contaNeuronio][contaCamada] = funcaoDeAtivacao(Il[contaNeuronio][contaCamada]);
-			//printf("valor do primeiro resultado do %d neuronio da %d camada: %.6f \n ",contaNeuronio,contaCamada, Yl[contaNeuronio][contaCamada]);
 		}
 	}
 }
-	//printf("valor do peso do segundo neuronio da segunda camada %.2f \n ", wl[0][1][0]);
-	saidas[0] = Yl[camadas - 1][0];
-	saidas[1] = Yl[camadas - 1][1];
-	saidas[2] = Yl[camadas - 1][2];
-	saidas[3] = Yl[camadas - 1][3];
-	saidas[4] = Yl[camadas - 1][4];
+	saidas[0] = Yl[0][camadas - 1];
+	saidas[1] = Yl[1][camadas - 1];
+	saidas[2] = Yl[2][camadas - 1];
+	saidas[3] = Yl[3][camadas - 1];
+	saidas[4] = Yl[4][camadas - 1];
 }
 
 
@@ -148,7 +138,6 @@ void preencheVetorDelta(int teste[xn][tamanhoAmostras], int amostra) {
 					resultado += vetorDelta[contaPeso][contaCamada + 1]*wl[contaPeso][contaNeuronio][contaCamada + 1];
 				}
 			vetorDelta[contaNeuronio][contaCamada] = resultado * derivadaFuncaoDeAtivacao(Il[contaNeuronio][contaCamada]);
-			//printf("valor do primeiro resultado do %d neuronio da %d camada: %.6f \n ",contaNeuronio,contaCamada, vetorDelta[contaNeuronio][contaCamada]);
 		}		
 		}
 		else if (contaCamada == 1) {
@@ -160,17 +149,13 @@ void preencheVetorDelta(int teste[xn][tamanhoAmostras], int amostra) {
 					resultado += vetorDelta[contaPeso][contaCamada + 1]*wl[contaPeso][contaNeuronio][contaCamada + 1];
 				}
 			vetorDelta[contaNeuronio][contaCamada] = resultado * derivadaFuncaoDeAtivacao(Il[contaNeuronio][contaCamada]);
-			//printf("valor do primeiro resultado do %d neuronio da %d camada: %.6f \n ",contaNeuronio,contaCamada, vetorDelta[contaNeuronio][contaCamada]);
 		}	
 		}
 		else if (contaCamada == 2){
 			limite2 = l3;
 			for(contaNeuronio = 0; contaNeuronio < limite2; contaNeuronio++) {
-			for(contaPeso = 0; contaPeso < limite1; contaPeso++) {
 				vetorDelta[contaNeuronio][contaCamada] = (saidaDesejada[contaNeuronio][amostra] - saidas[contaNeuronio])
 				*derivadaFuncaoDeAtivacao(Il[contaNeuronio][contaCamada]);
-			//printf("valor do primeiro resultado do %d neuronio da %d camada: %.6f \n ",contaNeuronio,contaCamada, vetorDelta[contaNeuronio][contaCamada]);
-			}
 		}
 
 }
@@ -190,7 +175,7 @@ void atualizaPesos(int amostra) {
 	int contaPeso, contaNeuronio, contaCamada;
 	int limite1, limite2;
 	double resultado = 0;
-	for(contaCamada = 0; contaCamada > camadas; contaCamada++) {
+	for(contaCamada = 0; contaCamada < camadas; contaCamada++) {
 		if (contaCamada == 0) {
 			limite1 = xn;
 			limite2 = l1;
@@ -320,7 +305,7 @@ double erroQuadratico(int amostra){
 }
 
 double erroQuadraticoMedio(){
-	double retorno;
+	double retorno = 0;
 	int k = 0;
 	double em = 0;
 	for(k = 0; k < tamanhoAmostras; k++) {
@@ -351,30 +336,44 @@ void imprimeVetoresDelta(){
 		else if (contaCamada == 2) {
 			tamanhoNeuronios = l3;
 		}
+		printf("VetorDelta%d%d \n", contaNeuronio +1, contaCamada + 1);
 		for(contaNeuronio = 0; contaNeuronio < tamanhoNeuronios; contaNeuronio++) {
-		printf(" Neuronio%d da camada%d: %.6f \n", contaNeuronio+1, contaCamada+1, vetorDelta[contaNeuronio][contaCamada]);
-	}
+			printf("%.6f \t",vetorDelta[contaNeuronio][contaCamada]);
+		}
+		printf("\n");
 }	
 }
-	
-void treinaRede() {
-	int contAmostras = 0;
-	int nEpocas = 0;
-	while (nEpocas < 1000) {
-	for (contAmostras = 0; contAmostras < tamanhoAmostras;contAmostras++) {
-		obtemResultadosPorCamadas(amostras, contAmostras);
-		preencheVetorDelta(amostras,contAmostras);
-		imprimeVetoresDelta();
-		atualizaPesos(contAmostras);
-		//imprimeSaidasEDesejadas(contAmostras);
-		printf("erro quadratico medio %.6f \n ",erroQuadraticoMedio());
-		fflush(stdout);
-		//sleep(1);
-	}
-	nEpocas++;	
-	}
 
+void imprimeVetoresEntradaESaida(){
+	int contaCamada = 0;
+	int contaNeuronio = 0;	
+	int tamanhoNeuronios = 0;
+	for(contaCamada = 0; contaCamada < camadas; contaCamada++) {
+		if (contaCamada == 0) {
+			tamanhoNeuronios = l1;
+		}
+		else if (contaCamada == 1) {
+			tamanhoNeuronios = l2;
+		}
+		else if (contaCamada == 2) {
+			tamanhoNeuronios = l3;
+		}
+		printf("Entrada%d%d \n", contaNeuronio +1, contaCamada + 1);
+		printf("\t");
+		for(contaNeuronio = 0; contaNeuronio < tamanhoNeuronios; contaNeuronio++) {
+			printf("%.6f \t",Il[contaNeuronio][contaCamada]);
+		}
+		printf("\n");
+		contaNeuronio = 0;
+		printf("Saida%d%d \n", contaNeuronio +1, contaCamada + 1);
+		printf("\t");
+		for(contaNeuronio = 0; contaNeuronio < tamanhoNeuronios; contaNeuronio++) {
+			printf("%.6f \t",Yl[contaNeuronio][contaCamada]);
+		}
+		printf("\n");
+}	
 }
+
 
 void imprimeVetorDePesos() {
 	int contaCamada = 0;
@@ -400,22 +399,52 @@ void imprimeVetorDePesos() {
 			limite1 = l2;
 			limite2 = l3;
 		}
+		for(contaNeuronio = 0; contaNeuronio < limite2; contaNeuronio++){
+			printf("Matrix %d%d \n ", contaNeuronio + 1, contaCamada + 1);
+			for(contaPeso = 0; contaPeso < limite1; contaPeso++){
+				printf("%0.3f  ", wl[contaNeuronio][contaPeso][contaCamada]);
+			}
+			printf("\n");
 		}
+		printf("\n");
+	}
+}
+	
+void treinaRede() {
+	int contAmostras = 0;
+	int nEpocas = 0;
+	while (nEpocas < 1000) {
+	for (contAmostras = 0; contAmostras < tamanhoAmostras;contAmostras++) {
+		//imprimeVetorDePesos();
+		obtemResultadosPorCamadas(amostras, contAmostras);
+		//imprimeSaidasEDesejadas(contAmostras);
+		//imprimeVetoresEntradaESaida();
+		preencheVetorDelta(amostras,contAmostras);
+		//imprimeVetoresDelta();
+		atualizaPesos(contAmostras);
+		//imprimeSaidasEDesejadas(contAmostras);
+		usleep(1000000);
+	}
+	printf("erro quadratico medio %.6f \n ",erroQuadraticoMedio());
+	fflush(stdout);
+	nEpocas++;	
+	}
+
 }
 
 
+
 int main() {
-	//double resultado = funcaoDeAtivacao(25);
+	char entrada[100];
+	//double resultado = funcaoDeAtivacao(-0.152574);
 	//printf("resultado : %.6f \n ", resultado);
 	preencheVetorDeAmostras();
 	geraPesosAleatorios();
 	treinaRede();
-	//obtemResultadosPorCamadas(amostras, 0);
-	//printf("erro quadratico medio %.6f \n ",erroQuadraticoMedio());	
-	//atualizaPesos(0);
-	//printf("erro quadratico medio %.6f \n ",erroQuadraticoMedio());	
-	//imprimeVetores();
-	//treinaRede();
+	printf("O processo de treinamento acabou. \n");
+	printf("Digite a imagem a ser classificada. (Cada entrada deve ser separada por \";\" \n");
+	scanf("%s", &entrada[0]); 
+
 	return 0;
 }
 	
