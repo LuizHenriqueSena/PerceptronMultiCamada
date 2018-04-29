@@ -29,6 +29,7 @@ int saidaDesejada[l3][tamanhoAmostras];
 double vetorDelta[l1][camadas];
 const char separadorGenerico[2] = ";";
 const char separadorSaida[2] = "-";
+const char separadorFim[2] = ".";
 double saidas[l3];
 
 
@@ -423,7 +424,7 @@ void treinaRede() {
 		//imprimeVetoresDelta();
 		atualizaPesos(contAmostras);
 		//imprimeSaidasEDesejadas(contAmostras);
-		usleep(1000000);
+		//usleep(1000000);
 	}
 	printf("erro quadratico medio %.6f \n ",erroQuadraticoMedio());
 	fflush(stdout);
@@ -432,7 +433,39 @@ void treinaRede() {
 
 }
 
+void parserEntradaParaVetor(char entrada[100], int linha) {
+   char copia[100];
+   char *token;
+   strcpy(copia, entrada);
+   int contx = 0;
+   /* get the first token */
+   token = strtok(copia, ";");
+   amostras[contx][linha] = atoi(token);
+   contx++;
+   /* walk through other tokens */
+   while( token != NULL ) {
+      if(contx >= xn - 1) {
+        token = strtok(NULL, separadorFim);
+	amostras[contx][linha] = atoi(token);
+	token = NULL;
+      }
+      else {
+	 token = strtok(NULL, separadorGenerico);
+         amostras[contx][linha] = atoi(token);
+	 //printf("VALOR DO segundo CAST : %d \n",amostras[contx][linha]);
+         contx++;
+      }
 
+
+}
+}
+
+void imprimePrimeiroVetor(){
+	int contador = 0;
+	for(contador = 0; contador < xn; contador++) {
+		printf("entrada %d : %d \n ", contador, amostras[contador][0]);
+	}
+}
 
 int main() {
 	char entrada[100];
@@ -442,9 +475,14 @@ int main() {
 	geraPesosAleatorios();
 	treinaRede();
 	printf("O processo de treinamento acabou. \n");
-	printf("Digite a imagem a ser classificada. (Cada entrada deve ser separada por \";\" \n");
+	printf("Digite a imagem a ser classificada: (Cada entrada deve ser separada por \";\" )\n");
 	scanf("%s", &entrada[0]); 
-
+	while(strstr(entrada, "q") == NULL){
+		parserEntradaParaVetor(entrada, 0);
+		imprimePrimeiroVetor();
+		printf("Digite a imagem a ser classificada. (Cada entrada deve ser separada por \";\" \n");
+		scanf("%s", &entrada[0]); 
+	}
 	return 0;
 }
 	
