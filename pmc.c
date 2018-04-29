@@ -35,7 +35,7 @@ double saidas[l3];
 
 double funcaoDeAtivacao(double u) {
 	double retorno;
-	retorno = (1/(1 + pow(2.718281,u)));
+	retorno = (1/(1 + pow(2.718281,(u*(-1)))));
 	return retorno;
 }
 
@@ -414,6 +414,7 @@ void imprimeVetorDePesos() {
 void treinaRede() {
 	int contAmostras = 0;
 	int nEpocas = 0;
+		printf("erro quadratico medio %.6f \n ",erroQuadraticoMedio());
 	while (nEpocas < 1000) {
 	for (contAmostras = 0; contAmostras < tamanhoAmostras;contAmostras++) {
 		//imprimeVetorDePesos();
@@ -424,7 +425,8 @@ void treinaRede() {
 		//imprimeVetoresDelta();
 		atualizaPesos(contAmostras);
 		//imprimeSaidasEDesejadas(contAmostras);
-		//usleep(1000000);
+		printf("erro quadratico medio %.6f \n ",erroQuadraticoMedio());
+		//usleep(6000000);
 	}
 	printf("erro quadratico medio %.6f \n ",erroQuadraticoMedio());
 	fflush(stdout);
@@ -467,6 +469,16 @@ void imprimePrimeiroVetor(){
 	}
 }
 
+void imprimeResultado() {
+	printf("\n\n\n-------------------RESULTADO-----------------\n");
+	printf("\t\tLetra A: %.5f \n", saidas[0]);
+	printf("\t\tLetra E: %.5f \n", saidas[1]);
+	printf("\t\tLetra I: %.5f \n", saidas[2]);
+	printf("\t\tLetra O: %.5f \n", saidas[3]);
+	printf("\t\tLetra U: %.5f \n", saidas[4]);
+	printf("----------------------------------------------\n\n\n");
+}
+
 int main() {
 	char entrada[100];
 	//double resultado = funcaoDeAtivacao(-0.152574);
@@ -475,11 +487,12 @@ int main() {
 	geraPesosAleatorios();
 	treinaRede();
 	printf("O processo de treinamento acabou. \n");
-	printf("Digite a imagem a ser classificada: (Cada entrada deve ser separada por \";\" )\n");
+	printf("Digite a imagem a ser classificada, ou \"q\" para sair: (Cada entrada deve ser separada por \";\" )\n");
 	scanf("%s", &entrada[0]); 
 	while(strstr(entrada, "q") == NULL){
 		parserEntradaParaVetor(entrada, 0);
-		imprimePrimeiroVetor();
+		obtemResultadosPorCamadas(amostras, 0);
+		imprimeResultado();
 		printf("Digite a imagem a ser classificada. (Cada entrada deve ser separada por \";\" \n");
 		scanf("%s", &entrada[0]); 
 	}
