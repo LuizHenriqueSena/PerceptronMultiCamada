@@ -415,7 +415,8 @@ void treinaRede() {
 	int contAmostras = 0;
 	int nEpocas = 0;
 		printf("erro quadratico medio %.6f \n ",erroQuadraticoMedio());
-	while (nEpocas < 1000) {
+	//while (abs(erroQuadraticoMedio()) >= 0.1) {
+	while (nEpocas < 2000) {
 	for (contAmostras = 0; contAmostras < tamanhoAmostras;contAmostras++) {
 		//imprimeVetorDePesos();
 		obtemResultadosPorCamadas(amostras, contAmostras);
@@ -426,7 +427,7 @@ void treinaRede() {
 		atualizaPesos(contAmostras);
 		//imprimeSaidasEDesejadas(contAmostras);
 		printf("erro quadratico medio %.6f \n ",erroQuadraticoMedio());
-		//usleep(6000000);
+		//usleep(500000);
 	}
 	printf("erro quadratico medio %.6f \n ",erroQuadraticoMedio());
 	fflush(stdout);
