@@ -3,6 +3,7 @@
 #include <string.h>
 #include <math.h>
 #include <unistd.h>
+#include <time.h>
 
 #define xn 25
 #define camadas 3
@@ -417,6 +418,8 @@ void imprimeVetorDePesos() {
 void randomizaPixel(int k){
 	int aux = 0;
 	int random = 0;
+	srand(clock());
+	srand(time(NULL));
 	random = rand()%25;
 	aux = amostras[random][k];
 	if(aux == 1) {
@@ -441,11 +444,11 @@ void poluiAmostras(){
 void treinaRede() {
 	int contAmostras = 0;
 	int nEpocas = 0;
-	double erroAtual = 0;
-	double erroAnterior = 0;
-	double erroValidacao = 1;
+	//double erroAtual = 0;
+	//double erroAnterior = 0;
+	//double erroValidacao = 1;
 	printf("erro quadratico medio %.6f \n ",fabs(erroQuadraticoMedio(0, 199)));
-	while (fabs(erroValidacao) > fabs((double)erro)) {
+	while (fabs(erroQuadraticoMedio(0, 199)) > fabs((double)erro)) {
 	//erroAnterior = erroAtual;
 	for (contAmostras = 0; contAmostras < tamanhoAmostras ;contAmostras++) {
 		//imprimeVetorDePesos();
@@ -459,8 +462,8 @@ void treinaRede() {
 		//printf("erro quadratico medio %.6f \n ",fabs(erroQuadraticoMedio()));
 		//usleep(500000);
 	}
-	erroAtual = erroQuadraticoMedio(0,199);
-	erroValidacao = erroAtual - erroAnterior;
+	//erroAtual = erroQuadraticoMedio(0,199);
+	//erroValidacao = erroAtual - erroAnterior;
 	printf("erro quadratico medio %.6f \n ",fabs(erroQuadraticoMedio(0,199)));
 	fflush(stdout);
 	nEpocas++;	
@@ -534,7 +537,9 @@ void desordenaVetoresAmostrasESaidas() {
 	int aux1 = 0;
 	int fixo = 0;
 	for(contador1 = 0; contador1 < 200; contador1++){
-		random = rand()%199;
+		srand(clock());
+		srand(time(NULL));
+		random = rand()%198;
 		if (random == fixo) {
 			random++;
 		}
@@ -556,7 +561,7 @@ int main() {
 	char entrada[100];
 	preencheVetorDeAmostras();
 	poluiAmostras();
-	desordenaVetoresAmostrasESaidas();
+	//desordenaVetoresAmostrasESaidas();
 	geraPesosAleatorios();
 	treinaRede();
 	printf("O processo de treinamento acabou. \n");
