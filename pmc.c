@@ -414,9 +414,9 @@ void imprimeVetorDePesos() {
 void treinaRede() {
 	int contAmostras = 0;
 	int nEpocas = 0;
-		printf("erro quadratico medio %.6f \n ",erroQuadraticoMedio());
+		printf("erro quadratico medio %.6f \n ",fabs(erroQuadraticoMedio()));
 	//while (abs(erroQuadraticoMedio()) >= 0.1) {
-	while (nEpocas < 2000) {
+	while (erroQuadraticoMedio() > fabs((double)0.2)) {
 	for (contAmostras = 0; contAmostras < tamanhoAmostras;contAmostras++) {
 		//imprimeVetorDePesos();
 		obtemResultadosPorCamadas(amostras, contAmostras);
