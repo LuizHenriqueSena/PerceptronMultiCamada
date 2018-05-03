@@ -9,11 +9,11 @@
 #define l1 5  //quantidade de neuronios na camada 1
 #define l2 4  //quantidade de neuronios na camada 2
 #define l3 5  //quantidade de neuronios na camada 3
-#define tamanhoAmostras 20
+#define tamanhoAmostras 200
 #define n 0.5
 #define e 0.1
 #define eta 0.5
-#define erro 0.1
+#define erro 0.01
 #define pesoInicial 0.2
 
 int entradas[xn + 1];
@@ -411,12 +411,36 @@ void imprimeVetorDePesos() {
 	}
 }
 	
+
+void randomizaPixel(int k){
+	int aux = 0;
+	int random = 0;
+	random = rand()%25;
+	aux = amostras[random][k];
+	if(aux == 1) {
+		amostras[random][k]=0;
+	}
+	else {
+		amostras[random][k]=1;
+	}
+}
+
+void poluiAmostras(){
+	int contadorAmostrasCorretas = 5;
+	int contadorAmostrasErradas = 126;
+	for(contadorAmostrasCorretas = 5; contadorAmostrasCorretas < 100; contadorAmostrasCorretas++){
+		randomizaPixel(contadorAmostrasCorretas);
+	}
+	for(contadorAmostrasErradas = 126; contadorAmostrasErradas < 200; contadorAmostrasErradas++){
+		randomizaPixel(contadorAmostrasErradas);
+	}
+}
+
 void treinaRede() {
 	int contAmostras = 0;
 	int nEpocas = 0;
-		printf("erro quadratico medio %.6f \n ",fabs(erroQuadraticoMedio()));
-	//while (abs(erroQuadraticoMedio()) >= 0.1) {
-	while (erroQuadraticoMedio() > fabs((double)0.2)) {
+	printf("erro quadratico medio %.6f \n ",fabs(erroQuadraticoMedio()));
+	while (fabs(erroQuadraticoMedio()) > fabs((double)erro)) {
 	for (contAmostras = 0; contAmostras < tamanhoAmostras;contAmostras++) {
 		//imprimeVetorDePesos();
 		obtemResultadosPorCamadas(amostras, contAmostras);
@@ -426,13 +450,14 @@ void treinaRede() {
 		//imprimeVetoresDelta();
 		atualizaPesos(contAmostras);
 		//imprimeSaidasEDesejadas(contAmostras);
-		printf("erro quadratico medio %.6f \n ",erroQuadraticoMedio());
+		//printf("erro quadratico medio %.6f \n ",fabs(erroQuadraticoMedio()));
 		//usleep(500000);
 	}
-	printf("erro quadratico medio %.6f \n ",erroQuadraticoMedio());
+	printf("erro quadratico medio %.6f \n ",fabs(erroQuadraticoMedio()));
 	fflush(stdout);
 	nEpocas++;	
 	}
+	printf("NUMERO DE EPOCAS: %d \n", nEpocas);
 
 }
 
@@ -470,6 +495,19 @@ void imprimePrimeiroVetor(){
 	}
 }
 
+void imprimePoluidos(){
+	int contador = 0;
+	int contadorx = 0;
+	for(contador = 0; contador < tamanhoAmostras; contador++) {
+		printf("Amostra%d \n", contador);
+		for(contadorx = 0; contadorx < xn; contadorx++) {
+			printf("%d;", amostras[contadorx][contador]);
+		}
+		printf("\n");
+	}
+}
+
+
 void imprimeResultado() {
 	printf("\n\n\n-------------------RESULTADO-----------------\n");
 	printf("\t\tLetra A: %.5f \n", saidas[0]);
@@ -481,10 +519,10 @@ void imprimeResultado() {
 }
 
 int main() {
+	imprimePoluidos();
 	char entrada[100];
-	//double resultado = funcaoDeAtivacao(-0.152574);
-	//printf("resultado : %.6f \n ", resultado);
 	preencheVetorDeAmostras();
+	poluiAmostras();
 	geraPesosAleatorios();
 	treinaRede();
 	printf("O processo de treinamento acabou. \n");
