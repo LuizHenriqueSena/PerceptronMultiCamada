@@ -518,14 +518,41 @@ void imprimeResultado() {
 	printf("----------------------------------------------\n\n\n");
 }
 
+void desordenaVetoresAmostrasESaidas() {
+	int contador1, contador2;
+	int contador3;
+	int random = 0;
+	int aux = 0;
+	int aux1 = 0;
+	int fixo = 0;
+	for(contador1 = 0; contador1 < 200; contador1++){
+		random = rand()%199;
+		if (random == fixo) {
+			random++;
+		}
+		for(contador2 = 0; contador2 <xn; contador2++) {
+		aux = amostras[contador2][random];
+		amostras[contador2][random] = amostras[contador2][fixo];
+		amostras[contador2][fixo] = aux;
+		}
+		for(contador3 = 0; contador3 <l3; contador3++){
+		aux1 = saidaDesejada[contador3][random];
+		saidaDesejada[contador3][random] = saidaDesejada[contador3][fixo];
+		saidaDesejada[contador3][fixo] = aux1;
+		}
+		fixo++;
+	}
+}
+
 int main() {
-	imprimePoluidos();
 	char entrada[100];
 	preencheVetorDeAmostras();
 	poluiAmostras();
+	desordenaVetoresAmostrasESaidas();
 	geraPesosAleatorios();
 	treinaRede();
 	printf("O processo de treinamento acabou. \n");
+	imprimePoluidos();
 	printf("Digite a imagem a ser classificada, ou \"q\" para sair: (Cada entrada deve ser separada por \";\" )\n");
 	scanf("%s", &entrada[0]); 
 	while(strstr(entrada, "q") == NULL){
