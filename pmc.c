@@ -13,8 +13,10 @@
 #define n 0.5
 #define e 0.1
 #define eta 0.5
-#define erro 0.01
+#define erro 0.001
 #define pesoInicial 0.2
+#define treinamento 170
+#define validacao 199
 
 int entradas[xn + 1];
 
@@ -305,11 +307,11 @@ double erroQuadratico(int amostra){
 	return retorno;
 }
 
-double erroQuadraticoMedio(){
+double erroQuadraticoMedio(int inicial, int final){
 	double retorno = 0;
-	int k = 0;
+	int k = inicial;
 	double em = 0;
-	for(k = 0; k < tamanhoAmostras; k++) {
+	for(k = inicial; k <= final; k++) {
 		em += erroQuadratico(k);
 }
 	retorno = em/tamanhoAmostras;
@@ -439,9 +441,13 @@ void poluiAmostras(){
 void treinaRede() {
 	int contAmostras = 0;
 	int nEpocas = 0;
-	printf("erro quadratico medio %.6f \n ",fabs(erroQuadraticoMedio()));
-	while (fabs(erroQuadraticoMedio()) > fabs((double)erro)) {
-	for (contAmostras = 0; contAmostras < tamanhoAmostras;contAmostras++) {
+	double erroAtual = 0;
+	double erroAnterior = 0;
+	double erroValidacao = 1;
+	printf("erro quadratico medio %.6f \n ",fabs(erroQuadraticoMedio(0, 199)));
+	while (fabs(erroValidacao) > fabs((double)erro)) {
+	//erroAnterior = erroAtual;
+	for (contAmostras = 0; contAmostras < tamanhoAmostras ;contAmostras++) {
 		//imprimeVetorDePesos();
 		obtemResultadosPorCamadas(amostras, contAmostras);
 		//imprimeSaidasEDesejadas(contAmostras);
@@ -453,7 +459,9 @@ void treinaRede() {
 		//printf("erro quadratico medio %.6f \n ",fabs(erroQuadraticoMedio()));
 		//usleep(500000);
 	}
-	printf("erro quadratico medio %.6f \n ",fabs(erroQuadraticoMedio()));
+	erroAtual = erroQuadraticoMedio(0,199);
+	erroValidacao = erroAtual - erroAnterior;
+	printf("erro quadratico medio %.6f \n ",fabs(erroQuadraticoMedio(0,199)));
 	fflush(stdout);
 	nEpocas++;	
 	}
@@ -552,7 +560,7 @@ int main() {
 	geraPesosAleatorios();
 	treinaRede();
 	printf("O processo de treinamento acabou. \n");
-	imprimePoluidos();
+	//imprimePoluidos();
 	printf("Digite a imagem a ser classificada, ou \"q\" para sair: (Cada entrada deve ser separada por \";\" )\n");
 	scanf("%s", &entrada[0]); 
 	while(strstr(entrada, "q") == NULL){
