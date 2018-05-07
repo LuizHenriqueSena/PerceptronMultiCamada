@@ -564,15 +564,17 @@ void geraMatrizConfusao(int ini, int fim) {
 	int aux1 = 5;
 	int aux2 = 5;
 	for(contador = ini; contador < fim; contador++) {
+		aux1 = 5;
+		aux2 = 5;
 		obtemResultadosPorCamadas(amostras, contador);
 		for(cont = 0; cont < 5; cont++) {
-			if (saidas[cont] > 0.5){
+			if (saidas[cont] > (double) 0.5){
 				aux1 = cont;
 				break;
 			}
 		}
 		for(cont = 0; cont < 5; cont++) {
-			if (saidasDesejadas[cont][contador] == 1){
+			if (saidaDesejada[cont][contador] == 1){
 				aux2 = cont;
 				break;
 			}
@@ -584,7 +586,7 @@ void geraMatrizConfusao(int ini, int fim) {
 void imprimeConfusao() {
 	int contador = 0;
 	int contador1 = 0;
-	printf("   A \t E \t I \t O \t U \t N \n");
+	printf("\n\n   A \t E \t I \t O \t U \t N \n");
 	for(contador =0; contador < (l3+1); contador++){
 		if (contador == 0) {
 		printf("A %d \t %d \t %d \t %d \t %d \t %d \n", confusao[0][0],confusao[1][0],confusao[2][0],confusao[3][0],confusao[4][0],
@@ -611,6 +613,8 @@ void imprimeConfusao() {
 		confusao[5][5]);
 		}
 }
+	printf("\n\n");
+}
 
 int main() {
 	char entrada[100];
@@ -619,6 +623,8 @@ int main() {
 	//desordenaVetoresAmostrasESaidas();
 	geraPesosAleatorios();
 	treinaRede();
+	geraMatrizConfusao(0, 200);
+	imprimeConfusao();
 	printf("O processo de treinamento acabou. \n");
 	//imprimePoluidos();
 	printf("Digite a imagem a ser classificada, ou \"q\" para sair: (Cada entrada deve ser separada por \";\" )\n");
