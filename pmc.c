@@ -34,6 +34,7 @@ const char separadorGenerico[2] = ";";
 const char separadorSaida[2] = "-";
 const char separadorFim[2] = ".";
 double saidas[l3];
+int confusao[l3+1][l3+1];
 
 
 double funcaoDeAtivacao(double u) {
@@ -555,6 +556,60 @@ void desordenaVetoresAmostrasESaidas() {
 		}
 		fixo++;
 	}
+}
+
+void geraMatrizConfusao(int ini, int fim) {
+	int contador = 0;
+	int cont = 0;
+	int aux1 = 5;
+	int aux2 = 5;
+	for(contador = ini; contador < fim; contador++) {
+		obtemResultadosPorCamadas(amostras, contador);
+		for(cont = 0; cont < 5; cont++) {
+			if (saidas[cont] > 0.5){
+				aux1 = cont;
+				break;
+			}
+		}
+		for(cont = 0; cont < 5; cont++) {
+			if (saidasDesejadas[cont][contador] == 1){
+				aux2 = cont;
+				break;
+			}
+		}	
+		confusao[aux1][aux2] += 1;
+	}
+}
+
+void imprimeConfusao() {
+	int contador = 0;
+	int contador1 = 0;
+	printf("   A \t E \t I \t O \t U \t N \n");
+	for(contador =0; contador < (l3+1); contador++){
+		if (contador == 0) {
+		printf("A %d \t %d \t %d \t %d \t %d \t %d \n", confusao[0][0],confusao[1][0],confusao[2][0],confusao[3][0],confusao[4][0],
+		confusao[5][0]);
+		}
+		else if (contador == 1) {
+		printf("E %d \t %d \t %d \t %d \t %d \t %d \n", confusao[0][1],confusao[1][1],confusao[2][1],confusao[3][1],confusao[4][1],
+		confusao[5][1]);
+		}
+		else if (contador == 2) {
+		printf("I %d \t %d \t %d \t %d \t %d \t %d \n", confusao[0][2],confusao[1][2],confusao[2][2],confusao[3][2],confusao[4][2],
+		confusao[5][2]);
+		}
+		else if (contador == 3) {
+		printf("O %d \t %d \t %d \t %d \t %d \t %d \n", confusao[0][3],confusao[1][3],confusao[2][3],confusao[3][3],confusao[4][3],
+		confusao[5][3]);
+		}
+		else if (contador == 4) {
+		printf("U %d \t %d \t %d \t %d \t %d \t %d \n", confusao[0][4],confusao[1][4],confusao[2][4],confusao[3][4],confusao[4][4],
+		confusao[5][4]);
+		}
+		else if (contador == 5) {
+		printf("N %d \t %d \t %d \t %d \t %d \t %d \n", confusao[0][5],confusao[1][5],confusao[2][5],confusao[3][5],confusao[4][5],
+		confusao[5][5]);
+		}
 }
 
 int main() {
