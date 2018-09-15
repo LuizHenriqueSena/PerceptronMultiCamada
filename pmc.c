@@ -14,12 +14,12 @@
 #define n 0.5
 #define e 0.1
 #define eta 0.5
-#define erro 0.001
+#define erro 0.01
 #define pesoInicial 0.2
-#define treinamento 170
+#define treinamento 149
 #define validacao 199
 
-int entradas[xn + 1];
+int entradas[xn];
 
 //Escolher sempre a maior camada para os parametros entre l1, l2, l3 de [x][y][z] das matrizes
 
@@ -107,7 +107,7 @@ double resultado = 0.0;
 			for(contaPeso = 0; contaPeso < limite1; contaPeso++) {
 				resultado += teste[contaPeso][amostra]*wl[contaNeuronio][contaPeso][contaCamada];
 			}
-			resultado += (wl[contaNeuronio][contaPeso][contaCamada] * (-1));
+			resultado += (wl[contaNeuronio][contaPeso][contaCamada]);
 			Il[contaNeuronio][contaCamada] = resultado;
 			Yl[contaNeuronio][contaCamada] = funcaoDeAtivacao(Il[contaNeuronio][contaCamada]);	
 		}
@@ -115,7 +115,7 @@ double resultado = 0.0;
 			for(contaPeso = 0; contaPeso < limite1; contaPeso++) {
 				resultado += Yl[contaPeso][contaCamada-1]*wl[contaNeuronio][contaPeso][contaCamada];
 			}
-			resultado += (wl[contaNeuronio][contaPeso][contaCamada] * (-1));
+			resultado += (wl[contaNeuronio][contaPeso+1][contaCamada]);
 			Il[contaNeuronio][contaCamada] = resultado;
 			Yl[contaNeuronio][contaCamada] = funcaoDeAtivacao(Il[contaNeuronio][contaCamada]);
 		}
@@ -201,7 +201,7 @@ void atualizaPesos(int amostra) {
 					vetorDelta[contaNeuronio][contaCamada]*amostras[contaPeso][amostra];
 				}
 					wl[contaNeuronio][contaPeso][contaCamada] = wl[contaNeuronio][contaPeso][contaCamada] + eta*
-					vetorDelta[contaNeuronio][contaCamada]*(-1);
+					vetorDelta[contaNeuronio][contaCamada];
 			}
 			else {
 				for(contaPeso = 0; contaPeso < limite1; contaPeso++) {
@@ -209,7 +209,7 @@ void atualizaPesos(int amostra) {
 					vetorDelta[contaNeuronio][contaCamada]*Yl[contaPeso][contaCamada - 1];
 				}
 					wl[contaNeuronio][contaPeso][contaCamada] = wl[contaNeuronio][contaPeso][contaCamada] + eta*
-					vetorDelta[contaNeuronio][contaCamada]*(-1);
+					vetorDelta[contaNeuronio][contaCamada];
 			}				
 		}
 	}
@@ -393,7 +393,7 @@ void imprimeVetorDePesos() {
 		//pesosSinapticos[cont] = ((float)(rand()%100))/100; 
 		//printf("PESOS ALEATORIO: %d com valor: %.2f \n", cont, pesosSinapticos[cont]);
 		if (contaCamada == 0) {
-			limite1 = xn;
+			limite1 = xn + 1;
 			limite2 = l1;
 		}
 		else if (contaCamada == 1) {
@@ -410,6 +410,7 @@ void imprimeVetorDePesos() {
 				printf("%0.3f  ", wl[contaNeuronio][contaPeso][contaCamada]);
 			}
 			printf("\n");
+			printf("Bias %d%d %0.3f \n ", contaNeuronio + 1, contaCamada + 1,wl[contaNeuronio][contaPeso][contaCamada] );
 		}
 		printf("\n");
 	}
@@ -448,10 +449,10 @@ void treinaRede() {
 	//double erroAtual = 0;
 	//double erroAnterior = 0;
 	//double erroValidacao = 1;
-	printf("erro quadratico medio %.6f \n ",fabs(erroQuadraticoMedio(0, 199)));
-	while (fabs(erroQuadraticoMedio(0, 199)) > fabs((double)erro)) {
+	printf("erro quadratico medio %.6f \n ",fabs(erroQuadraticoMedio(150, 169)));
+	while (fabs(erroQuadraticoMedio(150, 169)) > fabs((double)erro)) {
 	//erroAnterior = erroAtual;
-	for (contAmostras = 0; contAmostras < tamanhoAmostras ;contAmostras++) {
+	for (contAmostras = 0; contAmostras <= treinamento ;contAmostras++) {
 		//imprimeVetorDePesos();
 		obtemResultadosPorCamadas(amostras, contAmostras);
 		//imprimeSaidasEDesejadas(contAmostras);
@@ -465,7 +466,7 @@ void treinaRede() {
 	}
 	//erroAtual = erroQuadraticoMedio(0,199);
 	//erroValidacao = erroAtual - erroAnterior;
-	printf("erro quadratico medio %.6f \n ",fabs(erroQuadraticoMedio(0,199)));
+	printf("erro quadratico medio %.6f \n ",fabs(erroQuadraticoMedio(150,169)));
 	fflush(stdout);
 	nEpocas++;	
 	}
@@ -623,10 +624,11 @@ int main() {
 	//desordenaVetoresAmostrasESaidas();
 	geraPesosAleatorios();
 	treinaRede();
-	geraMatrizConfusao(0, 200);
+	geraMatrizConfusao(170, 199);
 	imprimeConfusao();
 	printf("O processo de treinamento acabou. \n");
 	//imprimePoluidos();
+	imprimeVetorDePesos();
 	printf("Digite a imagem a ser classificada, ou \"q\" para sair: (Cada entrada deve ser separada por \";\" )\n");
 	scanf("%s", &entrada[0]); 
 	while(strstr(entrada, "q") == NULL){
