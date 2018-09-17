@@ -14,7 +14,7 @@
 #define n 0.5
 #define e 0.1
 #define eta 0.5
-#define erro 0.01
+#define erro 0.005
 #define pesoInicial 0.2
 #define treinamento 149
 #define validacao 199
@@ -115,7 +115,7 @@ double resultado = 0.0;
 			for(contaPeso = 0; contaPeso < limite1; contaPeso++) {
 				resultado += Yl[contaPeso][contaCamada-1]*wl[contaNeuronio][contaPeso][contaCamada];
 			}
-			resultado += (wl[contaNeuronio][contaPeso+1][contaCamada]);
+			resultado += (wl[contaNeuronio][contaPeso][contaCamada]);
 			Il[contaNeuronio][contaCamada] = resultado;
 			Yl[contaNeuronio][contaCamada] = funcaoDeAtivacao(Il[contaNeuronio][contaCamada]);
 		}
@@ -393,7 +393,7 @@ void imprimeVetorDePesos() {
 		//pesosSinapticos[cont] = ((float)(rand()%100))/100; 
 		//printf("PESOS ALEATORIO: %d com valor: %.2f \n", cont, pesosSinapticos[cont]);
 		if (contaCamada == 0) {
-			limite1 = xn + 1;
+			limite1 = xn;
 			limite2 = l1;
 		}
 		else if (contaCamada == 1) {
@@ -404,13 +404,28 @@ void imprimeVetorDePesos() {
 			limite1 = l2;
 			limite2 = l3;
 		}
+		printf("float wfc%d[%d]={ ", contaCamada + 1, limite1*limite2);
 		for(contaNeuronio = 0; contaNeuronio < limite2; contaNeuronio++){
-			printf("Matrix %d%d \n ", contaNeuronio + 1, contaCamada + 1);
 			for(contaPeso = 0; contaPeso < limite1; contaPeso++){
-				printf("%0.3f  ", wl[contaNeuronio][contaPeso][contaCamada]);
+				if((contaPeso == limite1 -1)&&(contaNeuronio==limite2-1)) {
+					printf("%0.6f", wl[contaNeuronio][contaPeso][contaCamada]);
+				} else {
+					printf("%0.6f,  ", wl[contaNeuronio][contaPeso][contaCamada]);
+				}
 			}
+			if(contaNeuronio==limite2-1) {
+				printf(" }; \n");
+			} else 
+				printf("\n");			
+		}
 			printf("\n");
-			printf("Bias %d%d %0.3f \n ", contaNeuronio + 1, contaCamada + 1,wl[contaNeuronio][contaPeso][contaCamada] );
+			printf("float bfc%d[%d]={ ", contaCamada + 1, limite2);
+		for(contaNeuronio = 0; contaNeuronio < limite2; contaNeuronio++){
+			if(contaNeuronio==limite2-1) {
+				printf("%0.6f }; \n ",wl[contaNeuronio][limite1][contaCamada] );
+			}
+			else
+				printf("%0.6f, ",wl[contaNeuronio][limite1][contaCamada] );	
 		}
 		printf("\n");
 	}
@@ -617,6 +632,38 @@ void imprimeConfusao() {
 	printf("\n\n");
 }
 
+
+void imprimeResultadosPorCamada(){
+int contaCamada = 0;
+int limite1 = 0;
+int limite2 = 0;                                                                                                                                                               
+
+int contaNeuronio = 0;
+double resultado = 0.0;
+
+
+	for(contaCamada = 0; contaCamada < camadas; contaCamada++) {
+		if (contaCamada == 0) {
+			limite1 = xn;
+			limite2 = l1;
+		}
+		else if (contaCamada == 1) {
+			limite1 = l1;
+			limite2 = l2;
+		}
+		else if (contaCamada == 2){
+			limite1 = l2;
+			limite2 = l3;
+		}
+		for(contaNeuronio = 0; contaNeuronio < limite2; contaNeuronio++) {
+
+			printf("Entrada%d%d = %.6f \n", contaNeuronio, contaCamada, Il[contaNeuronio][contaCamada]);
+			printf("Saida%d%d = %.6f \n", contaNeuronio, contaCamada, Yl[contaNeuronio][contaCamada]);
+		}
+	}
+}
+
+
 int main() {
 	char entrada[100];
 	preencheVetorDeAmostras();
@@ -635,6 +682,7 @@ int main() {
 		parserEntradaParaVetor(entrada, 0);
 		obtemResultadosPorCamadas(amostras, 0);
 		imprimeResultado();
+		//imprimeResultadosPorCamada();
 		printf("Digite a imagem a ser classificada. (Cada entrada deve ser separada por \";\" \n");
 		scanf("%s", &entrada[0]); 
 	}
