@@ -27,7 +27,7 @@ int entradas[xn];
 double wl[xn + 1][l1][camadas];
 double Il[l1][l1];
 double Yl[l1][l1];
-int amostras[xn][tamanhoAmostras];
+double amostras[xn][tamanhoAmostras];
 int saidaDesejada[l3][tamanhoAmostras];
 double vetorDelta[l1][camadas];
 const char separadorGenerico[2] = ";";
@@ -56,7 +56,7 @@ int limite2 = 0;
 int contaPeso = 0;
 int contaNeuronio = 0;
 	for(cont = 0; cont < camadas; cont++) {
-		//pesosSinapticos[cont] = ((float)(rand()%100))/100; 
+		//pesosSinapticos[cont] = ((float)(rand()%100))/100;
 		//printf("PESOS ALEATORIO: %d com valor: %.2f \n", cont, pesosSinapticos[cont]);
 		if (cont == 0) {
 			limite1 = xn;
@@ -79,10 +79,10 @@ int contaNeuronio = 0;
 }
 
 
-void obtemResultadosPorCamadas(int teste[xn][tamanhoAmostras], int amostra) {
+void obtemResultadosPorCamadas(double teste[xn][tamanhoAmostras], int amostra) {
 int contaCamada = 0;
 int limite1 = 0;
-int limite2 = 0;                                                                                                                                                               
+int limite2 = 0;
 int contaPeso = 0;
 int contaNeuronio = 0;
 double resultado = 0.0;
@@ -109,7 +109,7 @@ double resultado = 0.0;
 			}
 			resultado += (wl[contaNeuronio][contaPeso][contaCamada]);
 			Il[contaNeuronio][contaCamada] = resultado;
-			Yl[contaNeuronio][contaCamada] = funcaoDeAtivacao(Il[contaNeuronio][contaCamada]);	
+			Yl[contaNeuronio][contaCamada] = funcaoDeAtivacao(Il[contaNeuronio][contaCamada]);
 		}
 		else {
 			for(contaPeso = 0; contaPeso < limite1; contaPeso++) {
@@ -129,7 +129,7 @@ double resultado = 0.0;
 }
 
 
-void preencheVetorDelta(int teste[xn][tamanhoAmostras], int amostra) {
+void preencheVetorDelta(double teste[xn][tamanhoAmostras], int amostra) {
 	int contaPeso, contaNeuronio, contaCamada;
 	int limite1, limite2;
 	double resultado = 0;
@@ -143,7 +143,7 @@ void preencheVetorDelta(int teste[xn][tamanhoAmostras], int amostra) {
 					resultado += vetorDelta[contaPeso][contaCamada + 1]*wl[contaPeso][contaNeuronio][contaCamada + 1];
 				}
 			vetorDelta[contaNeuronio][contaCamada] = resultado * derivadaFuncaoDeAtivacao(Il[contaNeuronio][contaCamada]);
-		}		
+		}
 		}
 		else if (contaCamada == 1) {
 			limite1 = l3;
@@ -154,7 +154,7 @@ void preencheVetorDelta(int teste[xn][tamanhoAmostras], int amostra) {
 					resultado += vetorDelta[contaPeso][contaCamada + 1]*wl[contaPeso][contaNeuronio][contaCamada + 1];
 				}
 			vetorDelta[contaNeuronio][contaCamada] = resultado * derivadaFuncaoDeAtivacao(Il[contaNeuronio][contaCamada]);
-		}	
+		}
 		}
 		else if (contaCamada == 2){
 			limite2 = l3;
@@ -166,7 +166,7 @@ void preencheVetorDelta(int teste[xn][tamanhoAmostras], int amostra) {
 }
 }
 }
-	
+
 
 void imprimeRedeResultante() {
 int cont = 0;
@@ -210,14 +210,14 @@ void atualizaPesos(int amostra) {
 				}
 					wl[contaNeuronio][contaPeso][contaCamada] = wl[contaNeuronio][contaPeso][contaCamada] + eta*
 					vetorDelta[contaNeuronio][contaCamada];
-			}				
+			}
 		}
 	}
 }
 
 
 void parserAmostras(char *strn, int linha) {
-   char copia[100];
+   char copia[300];
    char *token;
    strcpy(copia, strn);
    int contx = 0;
@@ -225,7 +225,7 @@ void parserAmostras(char *strn, int linha) {
    int jaEncontreiASaida = 0;
    /* get the first token */
    token = strtok(copia, ";");
-   amostras[contx][linha] = atoi(token);
+   amostras[contx][linha] = ((float) atoi(token))/255;
 	//printf("VALOR DO PRIMEIRO CAST : %d \n",amostras[contx][linha]);
    contx++;
 
@@ -234,7 +234,7 @@ void parserAmostras(char *strn, int linha) {
    if (!jaEncontreiASaida) {
       if(contx >= xn - 1) {
         token = strtok(NULL, separadorSaida);
-	amostras[contx][linha] = atoi(token);
+	amostras[contx][linha] = ((float) atoi(token))/255;
 	//printf("VALOR DO ultimo CAST : %d \n",amostras[contx][linha]);
 	token = strtok(NULL, separadorGenerico);
 	jaEncontreiASaida = 1;
@@ -243,7 +243,7 @@ void parserAmostras(char *strn, int linha) {
       }
       else {
 	 token = strtok(NULL, separadorGenerico);
-         amostras[contx][linha] = atoi(token);
+         amostras[contx][linha] = ((float) atoi(token))/255;
 	 //printf("VALOR DO segundo CAST : %d \n",amostras[contx][linha]);
          contx++;
       }
@@ -287,11 +287,11 @@ void imprimeVetores(void) {
 	for(j = 0; j < tamanhoAmostras; j++) {
 	printf("para a amostra numero %d temos: \n", j);
 		for(i = 0; i < xn; i++){
-		printf("entrada numero %d de valor %d \n", i, amostras[i][j]);
+		printf("entrada numero %d de valor %.6f \n", i, amostras[i][j]);
 		}
 		for(i = 0; i < l3; i++){
 		printf("para a saida numero %d temos: %d \n", j, saidaDesejada[i][j]);
-		}	
+		}
 	}
 
 }
@@ -321,7 +321,7 @@ double erroQuadraticoMedio(int inicial, int final){
 
 
 void imprimeSaidasEDesejadas(int amostra) {
-	int contador = 0;	
+	int contador = 0;
 	for(contador =0; contador < 5; contador++) {
 		printf(" Saida%d : %.9f e saidaDesejada%d: %d \n", contador, saidas[contador], contador, saidaDesejada[contador][amostra]);
 	}
@@ -329,7 +329,7 @@ void imprimeSaidasEDesejadas(int amostra) {
 
 void imprimeVetoresDelta(){
 	int contaCamada = 0;
-	int contaNeuronio = 0;	
+	int contaNeuronio = 0;
 	int tamanhoNeuronios = 0;
 	for(contaCamada = 0; contaCamada < camadas; contaCamada++) {
 		if (contaCamada == 0) {
@@ -346,12 +346,12 @@ void imprimeVetoresDelta(){
 			printf("%.6f \t",vetorDelta[contaNeuronio][contaCamada]);
 		}
 		printf("\n");
-}	
+}
 }
 
 void imprimeVetoresEntradaESaida(){
 	int contaCamada = 0;
-	int contaNeuronio = 0;	
+	int contaNeuronio = 0;
 	int tamanhoNeuronios = 0;
 	for(contaCamada = 0; contaCamada < camadas; contaCamada++) {
 		if (contaCamada == 0) {
@@ -376,21 +376,21 @@ void imprimeVetoresEntradaESaida(){
 			printf("%.6f \t",Yl[contaNeuronio][contaCamada]);
 		}
 		printf("\n");
-}	
+}
 }
 
 
 void imprimeVetorDePesos() {
 	int contaCamada = 0;
 	int limite1 = 0;
-	int limite2 = 0;                                                                                                                                                               
+	int limite2 = 0;
 	int contaPeso = 0;
 	int contaNeuronio = 0;
 	double resultado = 0.0;
 
 
 	for(contaCamada = 0; contaCamada < camadas; contaCamada++) {
-		//pesosSinapticos[cont] = ((float)(rand()%100))/100; 
+		//pesosSinapticos[cont] = ((float)(rand()%100))/100;
 		//printf("PESOS ALEATORIO: %d com valor: %.2f \n", cont, pesosSinapticos[cont]);
 		if (contaCamada == 0) {
 			limite1 = xn;
@@ -415,8 +415,8 @@ void imprimeVetorDePesos() {
 			}
 			if(contaNeuronio==limite2-1) {
 				printf(" }; \n");
-			} else 
-				printf("\n");			
+			} else
+				printf("\n");
 		}
 			printf("\n");
 			printf("float bfc%d[%d]={ ", contaCamada + 1, limite2);
@@ -425,15 +425,15 @@ void imprimeVetorDePesos() {
 				printf("%0.6f }; \n ",wl[contaNeuronio][limite1][contaCamada] );
 			}
 			else
-				printf("%0.6f, ",wl[contaNeuronio][limite1][contaCamada] );	
+				printf("%0.6f, ",wl[contaNeuronio][limite1][contaCamada] );
 		}
 		printf("\n");
 	}
 }
-	
+
 
 void randomizaPixel(int k){
-	int aux = 0;
+	double aux = 0;
 	int random = 0;
 	srand(clock());
 	srand(time(NULL));
@@ -483,31 +483,31 @@ void treinaRede() {
 	//erroValidacao = erroAtual - erroAnterior;
 	printf("erro quadratico medio %.6f \n ",fabs(erroQuadraticoMedio(150,169)));
 	fflush(stdout);
-	nEpocas++;	
+	nEpocas++;
 	}
 	printf("NUMERO DE EPOCAS: %d \n", nEpocas);
 
 }
 
-void parserEntradaParaVetor(char entrada[100], int linha) {
-   char copia[100];
+void parserEntradaParaVetor(char entrada[300], int linha) {
+   char copia[300];
    char *token;
    strcpy(copia, entrada);
    int contx = 0;
    /* get the first token */
    token = strtok(copia, ";");
-   amostras[contx][linha] = atoi(token);
+   amostras[contx][linha] = ((float) atoi(token))/255;
    contx++;
    /* walk through other tokens */
    while( token != NULL ) {
       if(contx >= xn - 1) {
         token = strtok(NULL, separadorFim);
-	amostras[contx][linha] = atoi(token);
+	amostras[contx][linha] = ((float) atoi(token))/255;
 	token = NULL;
       }
       else {
 	 token = strtok(NULL, separadorGenerico);
-         amostras[contx][linha] = atoi(token);
+         amostras[contx][linha] = ((float) atoi(token))/255;
 	 //printf("VALOR DO segundo CAST : %d \n",amostras[contx][linha]);
          contx++;
       }
@@ -519,7 +519,7 @@ void parserEntradaParaVetor(char entrada[100], int linha) {
 void imprimePrimeiroVetor(){
 	int contador = 0;
 	for(contador = 0; contador < xn; contador++) {
-		printf("entrada %d : %d \n ", contador, amostras[contador][0]);
+		printf("entrada %d : %.6f \n ", contador, amostras[contador][0]);
 	}
 }
 
@@ -529,7 +529,7 @@ void imprimePoluidos(){
 	for(contador = 0; contador < tamanhoAmostras; contador++) {
 		printf("Amostra%d \n", contador);
 		for(contadorx = 0; contadorx < xn; contadorx++) {
-			printf("%d;", amostras[contadorx][contador]);
+			printf("%.6f;", amostras[contadorx][contador]);
 		}
 		printf("\n");
 	}
@@ -550,7 +550,7 @@ void desordenaVetoresAmostrasESaidas() {
 	int contador1, contador2;
 	int contador3;
 	int random = 0;
-	int aux = 0;
+	double aux = 0;
 	int aux1 = 0;
 	int fixo = 0;
 	for(contador1 = 0; contador1 < 200; contador1++){
@@ -594,7 +594,7 @@ void geraMatrizConfusao(int ini, int fim) {
 				aux2 = cont;
 				break;
 			}
-		}	
+		}
 		confusao[aux1][aux2] += 1;
 	}
 }
@@ -636,7 +636,7 @@ void imprimeConfusao() {
 void imprimeResultadosPorCamada(){
 int contaCamada = 0;
 int limite1 = 0;
-int limite2 = 0;                                                                                                                                                               
+int limite2 = 0;
 
 int contaNeuronio = 0;
 double resultado = 0.0;
@@ -665,7 +665,7 @@ double resultado = 0.0;
 
 
 int main() {
-	char entrada[100];
+	char entrada[300];
 	preencheVetorDeAmostras();
 	poluiAmostras();
 	//desordenaVetoresAmostrasESaidas();
@@ -677,15 +677,14 @@ int main() {
 	//imprimePoluidos();
 	imprimeVetorDePesos();
 	printf("Digite a imagem a ser classificada, ou \"q\" para sair: (Cada entrada deve ser separada por \";\" )\n");
-	scanf("%s", &entrada[0]); 
+	scanf("%s", &entrada[0]);
 	while(strstr(entrada, "q") == NULL){
 		parserEntradaParaVetor(entrada, 0);
 		obtemResultadosPorCamadas(amostras, 0);
 		imprimeResultado();
 		//imprimeResultadosPorCamada();
 		printf("Digite a imagem a ser classificada. (Cada entrada deve ser separada por \";\" \n");
-		scanf("%s", &entrada[0]); 
+		scanf("%s", &entrada[0]);
 	}
 	return 0;
 }
-	
